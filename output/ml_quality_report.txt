@@ -1,0 +1,31 @@
+DiagnoSys ML Quality Assessment — Build Report
+===============================================
+Generated: 2026-03-03
+Task: Task 2 — ML Quality Assessment
+
+FILES WRITTEN
+-------------
+ml/quality_assessment/prompts.py           — XML-tagged CoT prompt templates + few-shot examples
+ml/quality_assessment/assessor.py          — DeepSeekAssessor with async batch, retry, Redis cache
+ml/quality_assessment/pipeline.py          — Celery tasks: assess_problem_quality, batch_assess_problems
+ml/quality_assessment/tests/test_assessor.py — Unit tests with mocked DeepSeek responses
+ml/quality_assessment/requirements.txt     — Pinned dependencies
+
+ARCHITECTURE DECISIONS
+-----------------------
+Model: DeepSeek-V3 (deepseek-chat) via REST API
+Prompt strategy: Few-shot CoT with XML-tagged reasoning + verdict
+Verdicts: unsolved | partial | adequate
+Concurrency: asyncio.Semaphore(5) — 5 parallel API calls
+Retry: exponential backoff (1s, 2s, 4s) for HTTP errors
+Caching: Redis with SHA-256 key, 7-day TTL (avoids re-assessing same content)
+Cost tracking: token usage logged per batch
+
+COST ESTIMATE
+-------------
+DeepSeek-V3 pricing: $0.14/M prompt tokens, $0.28/M completion tokens
+Avg tokens per problem: ~500 prompt + ~200 completion
+Cost per 1K problems: ~$0.14 + $0.056 = ~$0.20
+50K problems: ~$10 total assessment cost
+
+STATUS: All files written successfully

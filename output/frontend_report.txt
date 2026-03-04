@@ -1,0 +1,27 @@
+DiagnoSys Frontend — Build Report
+===================================
+Generated: 2026-03-03
+Task: Task 5 — Frontend
+
+FILES WRITTEN
+-------------
+frontend/package.json                         — Next.js 16, React 19, TanStack Query, lucide-react
+frontend/tailwind.config.ts                   — Tailwind with custom status colors
+frontend/tsconfig.json                        — Strict TypeScript with Next.js plugin
+frontend/src/lib/api.ts                       — Type-safe API client + useProblems/useProblem hooks
+frontend/src/components/SearchBar.tsx         — Debounced search (300ms) with loading/clear
+frontend/src/components/FilterPanel.tsx       — Domain chips, status radio, confidence slider
+frontend/src/components/ProblemCard.tsx       — Card with title, description preview, domain chips, status badge
+frontend/src/app/layout.tsx                   — Root layout with Inter font + React Query provider
+frontend/src/app/page.tsx                     — Search + filter + responsive grid + pagination
+frontend/src/app/problems/[id]/page.tsx       — Problem detail with domains, status, source link, sidebar
+
+ARCHITECTURE DECISIONS
+-----------------------
+Framework: Next.js 16 App Router with TypeScript strict mode
+Styling: Tailwind CSS utility classes (no CSS modules)
+Data fetching: TanStack React Query v5 (staleTime=60s, retry=2)
+Icons: lucide-react
+Responsive: 1-col (mobile) → 2-col (sm) → 3-col (lg) grid
+
+STATUS: All files written successfully ✓

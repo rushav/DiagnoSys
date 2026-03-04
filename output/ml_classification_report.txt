@@ -1,0 +1,47 @@
+DiagnoSys ML Classification System — Build Report
+==================================================
+Generated: 2026-03-03
+Task: Task 1 — ML Classification
+
+FILES WRITTEN
+-------------
+ml/classification/dataset.py      — DatasetBuilder with PostgreSQL loader, HTML cleaning,
+                                     512-token truncation, 20-label multi-hot encoding
+ml/classification/train.py        — QLoRA fine-tuning of Llama 3.1 8B with PEFT/BitsAndBytes
+ml/classification/inference.py    — FastAPI app (port 8001) with POST /ml/classify endpoint
+ml/classification/evaluate.py     — Precision/recall/F1 per domain + confusion matrices
+ml/classification/requirements.txt — Pinned Python dependencies
+
+ARCHITECTURE DECISIONS
+-----------------------
+Model: meta-llama/Meta-Llama-3.1-8B (base) with QLoRA adapters
+Quantisation: 4-bit NF4 via BitsAndBytes (fits in 10GB VRAM)
+PEFT rank: r=16, alpha=32 (LoRA on q_proj, v_proj, k_proj, o_proj)
+Training objective: BCEWithLogitsLoss (multi-label)
+Optimizer: paged_adamw_8bit for memory efficiency
+Scheduler: cosine with warmup (10% steps)
+
+VRAM USAGE ESTIMATE
+--------------------
+Base Llama 3.1 8B in 4-bit:  ~5.5 GB
+LoRA adapters (r=16):         ~0.3 GB
+Gradient checkpointing:       saves ~2 GB
+Activations (batch=4):        ~1.5 GB
+Total estimate:               ~7.5 GB / 10 GB (fits on RTX 3080)
+
+TRAINING TIME ESTIMATE
+-----------------------
+Dataset: 50K problems → ~40K train / 10K val
+Steps: ~10K (batch=4, 5 epochs)
+RTX 3080 throughput: ~8 samples/sec (QLoRA + gradient checkpointing)
+Estimated training time: ~90 minutes
+
+ASSUMPTIONS
+-----------
+1. PostgreSQL contains a 'problems' table with columns: id, title, description, tags, domain_labels
+2. Llama 3.1 8B weights are accessible (HuggingFace Hub or local)
+3. Wandb account configured for experiment tracking
+4. Inference model loaded at startup (single GPU, shared across requests)
+5. Threshold=0.5 for multi-label classification (tunable per domain)
+
+STATUS: All 5 files written successfully ✓

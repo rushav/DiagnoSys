@@ -1,0 +1,33 @@
+DiagnoSys Backend Scrapers — Build Report
+==========================================
+Generated: 2026-03-03
+Task: Task 3 — Backend Data Collection
+
+FILES WRITTEN
+-------------
+backend/scrapers/base.py              — BaseScraper with token bucket rate limiting + retry + dedup
+backend/scrapers/stack_exchange.py    — Stack Exchange API v2.3 (10 sites, unanswered questions)
+backend/scrapers/github_issues.py     — GitHub REST API v3 (18 repos, bug/help-wanted/question labels)
+backend/scrapers/reddit.py            — Reddit via PRAW (7 subreddits, new + hot posts)
+backend/scrapers/scheduler.py         — Celery beat: SE every 2h, GitHub every 30m, Reddit every 15m
+backend/scrapers/tests/test_scrapers.py — Unit tests with mocked HTTP responses
+
+RATE LIMITS
+-----------
+Stack Exchange: 10K requests/day with API key → token bucket 0.5 req/s, capacity 5
+GitHub: 5K requests/hour with token → token bucket 1.0 req/s, capacity 10
+Reddit: ~100 req/min via PRAW built-in → token bucket 1.5 req/s, capacity 10
+
+DEDUPLICATION
+-------------
+Before INSERT: query source_url in problems table, filter out existing URLs
+Hash-based cache key: SHA-256(source_url)
+
+ESTIMATED THROUGHPUT
+--------------------
+Stack Exchange: ~50K questions/day across 10 sites
+GitHub: ~20K issues/day across 18 repos
+Reddit: ~10K posts/day across 7 subreddits
+Total: ~80K raw problems/day (with dedup: ~10-20K new unique/day)
+
+STATUS: All files written successfully ✓

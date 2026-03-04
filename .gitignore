@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ML / model artifacts
+ml/classification/checkpoints/
+ml/classification/eval_results/
+*.pt
+*.bin
+*.safetensors
+
+# Node
+node_modules/
+.next/
+frontend/.next/
+frontend/out/
+
+# Docker
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
